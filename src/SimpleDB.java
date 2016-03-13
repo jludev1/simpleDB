@@ -11,20 +11,22 @@ public class SimpleDB {
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             String input;                
             while((input=br.readLine())!=null){
-                processCommand (input);
+                if (!processCommand (input))
+                    return;
             }
         }catch(IOException io){
             io.printStackTrace();
         }   
     }
     
-    private static void processCommand (String input) {
+    private static boolean processCommand (String input) {
         String[] token = input.split("\\s+");
         String command = token[0];
         try {
             switch (command) {
                 case "GET": 
-                    System.out.println(ds.get(token[1]));
+                    String value = ds.get(token[1]);
+                    System.out.println(value == null ? "NULL" : value);
                     break;
                 case "SET":
                     ds.set(token[1], token[2]);
@@ -36,7 +38,7 @@ public class SimpleDB {
                     System.out.println(ds.count(token[1]));
                     break;
                 case "END":
-                    return;
+                    return false;
                 case "BEGIN":
                     ds.createTransaction();
                     break;
@@ -53,6 +55,7 @@ public class SimpleDB {
         {
             System.out.println("Invalid num of parameters for command: " + input);
         }
+        return true;
     }
 }
 
